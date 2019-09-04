@@ -5,34 +5,17 @@ import ShopPage from './container/shop/shop.comp';
 import './App.css';
 import Header from './component/header/header.comp';
 import SignInAndSignUp from './container/signin-signup/sign-in-sign-up.comp';
-import {auth, createUserProfileDocument} from "./firebase/firebase.utils";
+import { connect } from "react-redux";
 
-export default class App extends React.Component{
+class App extends React.Component{
     constructor(props){
+        console.log(props)
         super(props);
-        this.state ={
-            currentUser:null
-        }
     }
     unsubscribeFromAuth = null;
 
      componentDidMount() {
-        this.unsubscribeFromAuth = auth.onAuthStateChanged( async userAuth =>{
-            if(userAuth){
-                const userRef = await createUserProfileDocument(userAuth);
-                 userRef.onSnapshot( snapShot => {
-                     this.setState({
-                        currentUser :{
-                            id:snapShot.id,
-                            ...snapShot.data()
-                        }
-                    });
-                });
-            }
-            this.setState({
-                currentUser: userAuth
-            })
-        })
+        this.unsubscribeFromAuth = this.props.onAuthChangedd();
     }
     componentWillUnmount() {
         this.unsubscribeFromAuth();
@@ -41,7 +24,7 @@ export default class App extends React.Component{
     render(){
         return(
             <div>
-                <Header currentUser ={this.state.currentUser}></Header>
+                <Header currentUser ={this.props.currentUser}></Header>
                 <Switch>
                     <Route exact path="/" component={ Homepage }></Route>
                     <Route exact path="/shop" component={ ShopPage }></Route>
@@ -51,3 +34,12 @@ export default class App extends React.Component{
         )
     }
 }
+const mapState = state => ({
+    currentUser: state.currentUser
+});
+
+const mapDispatch = dispatch => ({
+    onAuthChangedd: () => dispatch.signin.onAuthChanged(),
+});
+
+export default connect(mapState,mapDispatch)(App);
