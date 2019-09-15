@@ -8,23 +8,17 @@ import SignInAndSignUp from './container/signin-signup/sign-in-sign-up.comp';
 import { connect } from "react-redux";
 
 class App extends React.Component{
-    constructor(props){
-        console.log(props)
-        super(props);
-    }
-    unsubscribeFromAuth = null;
 
-     componentDidMount() {
-        this.unsubscribeFromAuth = this.props.onAuthChangedd();
-    }
-    componentWillUnmount() {
-        this.unsubscribeFromAuth();
+    unsubscribeFromAuth = null;
+    componentDidMount() {
+        this.unsubscribeFromAuth = this.props.onAuthChanged();
     }
 
     render(){
+        console.log(this.props)
         return(
             <div>
-                <Header currentUser ={this.props.currentUser}></Header>
+                <Header />
                 <Switch>
                     <Route exact path="/" component={ Homepage }></Route>
                     <Route exact path="/shop" component={ ShopPage }></Route>
@@ -34,12 +28,10 @@ class App extends React.Component{
         )
     }
 }
-const mapState = state => ({
-    currentUser: state.currentUser
-});
+
 
 const mapDispatch = dispatch => ({
-    onAuthChangedd: () => dispatch.signin.onAuthChanged(),
+    onAuthChanged: dispatch.signin.onAuthChanged
 });
 
-export default connect(mapState,mapDispatch)(App);
+export default connect(null,mapDispatch)(App);

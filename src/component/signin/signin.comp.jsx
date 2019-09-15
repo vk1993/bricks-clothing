@@ -36,7 +36,7 @@ export default class SignIn extends React.Component {
     render(){
         return (
             <div className="sign-in">
-                <h2>I already have an account</h2>
+                <h2>I have already an account</h2>
                 <span>SignIn with your email and password</span>
                 <form onSubmit = {this.handleSubmit}>
                     <FormInput name="email" label="Email" type="email" 

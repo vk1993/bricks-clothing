@@ -1,9 +1,7 @@
-import { init } from '@rematch/core';
-import {signin} from './signin.model'
+import signin from './signin.model'
+import signup from './signup.model'
 
-
-const store = init({
+export default {
     signin,
-})
 
-export default store
+}
