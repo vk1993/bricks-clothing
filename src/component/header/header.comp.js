@@ -5,31 +5,35 @@ import { connect } from "react-redux";
 import './header.style.scss'
 import {auth} from "../../firebase/firebase.utils";
 
-const Header =(props) =>{
-    return (
-        <div className="header">
-            <Link to='/' className='logo-container'>
-                <Logo className='logo' />
-            </Link>
-            <div className='options'>
-                <Link to='/shop' className='option'>SHOP</Link>
-                <Link to='/contact' className='option'>CONTACT</Link>
-                {
-                    props.currentUser ?
-                        <div className='option' onClick={()=> props.onLogout() }>SIGN OUT</div>:
-                        <Link className='option' to='/signin'>SIGN IN</Link>
-                }
-            </div>
-        </div>
-    )
-}
+const Header = ({currentUser}) => {
+    console.log(currentUser);
+  return (
+    <div className="header">
+      <Link to="/" className="logo-container">
+        <Logo className="logo" />
+      </Link>
+      <div className="options">
+        <Link to="/shop" className="option">
+          SHOP
+        </Link>
+        <Link to="/contact" className="option">
+          CONTACT
+        </Link>
+        {currentUser ? (
+          <div className="option" onClick = {() =>auth.signOut()}>
+            SIGN OUT
+          </div>
+        ) : (
+          <Link className="option" to="/signin">
+            SIGN IN
+          </Link>
+        )}
+      </div>
+    </div>
+  );
+};
 const mapState = state => ({
-    currentUser: state.signin.currentUser
+    currentUser: state.user.currentUser
 });
 
-const mapDispatch = dispatch => ({
-    onLogout: dispatch.signin.onLogout
-});
-
-
-export default connect(mapState,mapDispatch)(Header);
+export default connect(mapState,null)(Header);

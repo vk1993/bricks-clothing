@@ -6,19 +6,37 @@ import './App.css';
 import Header from './component/header/header.comp';
 import SignInAndSignUp from './container/signin-signup/sign-in-sign-up.comp';
 import { connect } from "react-redux";
+import { auth, createUserProfileDocument } from './firebase/firebase.utils';
+import { setCurrentUser } from './redux/user/user-action';
 
 class App extends React.Component{
 
     unsubscribeFromAuth = null;
     componentDidMount() {
-        this.unsubscribeFromAuth = this.props.onAuthChanged();
+        const { setCurrentUser } = this.props;
+        console.log("before the trigger login");        
+        console.log("after th"); 
+        console.log(setCurrentUser);
+        this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
+          if (userAuth) {
+            const userRef = await createUserProfileDocument(userAuth);
+            userRef.onSnapshot(snapShot => {
+                console.log(snapShot.data())
+              setCurrentUser({
+                id: snapShot.id,
+                ...snapShot.data()
+              });
+            });
+          }
+          setCurrentUser(userAuth);
+        });
     }
 
     render(){
         console.log(this.props)
         return(
             <div>
-                <Header />
+                <Header/>
                 <Switch>
                     <Route exact path="/" component={ Homepage }></Route>
                     <Route exact path="/shop" component={ ShopPage }></Route>
@@ -31,7 +49,7 @@ class App extends React.Component{
 
 
 const mapDispatch = dispatch => ({
-    onAuthChanged: dispatch.signin.onAuthChanged
+    setCurrentUser: user => dispatch(setCurrentUser(user))
 });
 
-export default connect(null,mapDispatch)(App);
+export default connect(null,mapDispatch)(App); 
