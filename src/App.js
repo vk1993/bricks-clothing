@@ -1,6 +1,6 @@
 import React from 'react';
 import Homepage from './container/homepage/homepage.comp';
-import {Switch, Route}  from 'react-router-dom';
+import {Switch, Route, Redirect}  from 'react-router-dom';
 import ShopPage from './container/shop/shop.comp';
 import './App.css';
 import Header from './component/header/header.comp';
@@ -14,9 +14,6 @@ class App extends React.Component{
     unsubscribeFromAuth = null;
     componentDidMount() {
         const { setCurrentUser } = this.props;
-        console.log("before the trigger login");        
-        console.log("after th"); 
-        console.log(setCurrentUser);
         this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
           if (userAuth) {
             const userRef = await createUserProfileDocument(userAuth);
@@ -33,23 +30,31 @@ class App extends React.Component{
     }
 
     render(){
-        console.log(this.props)
         return(
             <div>
                 <Header/>
                 <Switch>
                     <Route exact path="/" component={ Homepage }></Route>
                     <Route exact path="/shop" component={ ShopPage }></Route>
-                    <Route exact path="/signin" component={ SignInAndSignUp }></Route>
+                    <Route exact path="/signin" render = {() => this.props.currentUser ? (<Redirect to='/' />) :
+                    (<SignInAndSignUp />)
+                  }></Route>
                 </Switch>
             </div>
         )
     }
 }
 
+const mapState = ({user}) => ({
+  currentUser : user.currentUser
+})
+
 
 const mapDispatch = dispatch => ({
     setCurrentUser: user => dispatch(setCurrentUser(user))
 });
 
-export default connect(null,mapDispatch)(App); 
+export default connect(
+  mapState,
+  mapDispatch
+)(App); 

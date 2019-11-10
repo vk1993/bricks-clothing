@@ -1,7 +1,5 @@
-import signin from './signin.model'
-import signup from './signup.model'
+import signin from './signin.model';
 
 export default {
     signin,
-
 }
